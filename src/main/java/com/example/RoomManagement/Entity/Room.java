@@ -1,6 +1,7 @@
 package com.example.RoomManagement.Entity;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.security.SecureRandom;
@@ -55,6 +56,7 @@ public class Room {
     // Foreign key: user who posted the room
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
 
     // One room can have many images
