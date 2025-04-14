@@ -13,4 +13,13 @@ public class UserService {
     public User adduser(User user) {
         return userRepo.save(user);
     }
+
+    public User loginUser(String email, String password) {
+        User user = userRepo.findByEmail(email);
+        if (user != null && user.getPassword().equals(password)) {
+            return user; // valid login
+        } else {
+            throw new RuntimeException("Invalid email or password");
+        }
+    }
 }

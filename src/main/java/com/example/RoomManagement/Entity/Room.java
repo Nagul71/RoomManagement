@@ -1,6 +1,9 @@
 package com.example.RoomManagement.Entity;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import jakarta.persistence.*;
+
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +18,18 @@ public class Room {
 
     @Column(name = "sqr_ft")
     private Double squareFeet;
+
+    @PrePersist
+    public void generateId() {
+        this.timestamp = LocalDateTime.now();
+
+        SecureRandom random = new SecureRandom();
+        char[] alphabet = NanoIdUtils.DEFAULT_ALPHABET;
+        int size = 8;
+
+        this.roomId = "rm_" + NanoIdUtils.randomNanoId(random, alphabet, size);
+    }
+
 
     @Column(name = "location")
     private String location;

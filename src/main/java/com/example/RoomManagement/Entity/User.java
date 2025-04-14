@@ -1,10 +1,10 @@
 package com.example.RoomManagement.Entity;
-
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import jakarta.persistence.*;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -35,13 +35,17 @@ public class User {
     @PrePersist
     public void generateId() {
         this.timestamp = LocalDateTime.now();
-        this.userId = UUID.randomUUID().toString();
+
+        SecureRandom random = new SecureRandom();
+        char[] alphabet = NanoIdUtils.DEFAULT_ALPHABET;
+        int size = 8;
+
+        this.userId = "usr_" + NanoIdUtils.randomNanoId(random, alphabet, size);
     }
-    // One user can post many rooms
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Room> rooms = new ArrayList<>();
 
-    // Constructors
     public User() {}
 
     public User(String userId, String name, String email, String mobileNo, String password, String profileInfo, LocalDateTime timestamp) {
@@ -55,6 +59,7 @@ public class User {
     }
 
     // Getters and Setters
+
     public String getUserId() {
         return userId;
     }
