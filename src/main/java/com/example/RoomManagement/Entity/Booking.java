@@ -1,6 +1,9 @@
 package com.example.RoomManagement.Entity;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import jakarta.persistence.*;
+
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -50,6 +53,17 @@ public class Booking {
         this.rentalPeriod = rentalPeriod;
         this.user = user;
         this.room = room;
+    }
+
+    @PrePersist
+    public void generateId() {
+        this.timestamp = LocalDateTime.now();
+
+        SecureRandom random = new SecureRandom();
+        char[] alphabet = NanoIdUtils.DEFAULT_ALPHABET;
+        int size = 8;
+
+        this.bookingId = "bk_" + NanoIdUtils.randomNanoId(random, alphabet, size);
     }
 
     public String getBookingId() {
