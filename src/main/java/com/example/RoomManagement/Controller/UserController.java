@@ -3,6 +3,7 @@ import com.example.RoomManagement.DTO.LoginRequest;
 import com.example.RoomManagement.Entity.User;
 import com.example.RoomManagement.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,9 +22,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest loginRequest) {
-        userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
-        return "User Logged in Successfully";
+    public ResponseEntity<User> loginUser(@RequestBody LoginRequest request) {
+        User user = userService.loginUser(request.getEmail(), request.getPassword());
+        return ResponseEntity.ok(user); // This includes the userId
     }
 
 }

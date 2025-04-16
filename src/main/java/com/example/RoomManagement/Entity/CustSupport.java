@@ -1,5 +1,4 @@
 package com.example.RoomManagement.Entity;
-
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 

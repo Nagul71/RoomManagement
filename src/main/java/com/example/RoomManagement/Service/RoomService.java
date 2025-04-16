@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -60,4 +61,11 @@ public class RoomService {
         return user.getRooms();
     }
 
+    public List<Room> getAllRooms() {
+        return roomRepository.findAll();
+    }
+
+    public Optional<Room> getRoomById(String roomId) {
+        return roomRepository.findById(roomId);
+    }
 }

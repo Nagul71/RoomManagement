@@ -33,23 +33,20 @@ public class ImagesService {
 
     @Transactional
     public Images uploadImage(ImageUploadDTO imageUploadDTO) throws IOException {
-        // Find the room
-        Room room = roomRepository.findById(imageUploadDTO.getRoomId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room Not Found"));
-
         // Upload to Cloudinary
         Map<?, ?> uploadResult = cloudinary.uploader().upload(
                 imageUploadDTO.getFile().getBytes(),
-                ObjectUtils.emptyMap());
+                ObjectUtils.emptyMap()
+        );
 
-        String imageUrl = (String) uploadResult.get("secure_url");
+        // Get the room
+        Room room = roomRepository.findById(imageUploadDTO.getRoomId())
+                .orElseThrow(() -> new RuntimeException("Room not found"));
 
         // Create and save image entity
         Images image = new Images();
-        image.setImgId(generateImageId());
-        image.setImgUrl(imageUrl);
+        image.setImgUrl(uploadResult.get("url").toString());
         image.setRoom(room);
-        image.setTimestamp(LocalDateTime.now());
 
         return imagesRepository.save(image);
     }
