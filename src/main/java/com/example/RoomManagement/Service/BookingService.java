@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.awt.print.Book;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,31 +34,50 @@ public class BookingService {
     private RoomRepository roomRepository;
 
     @Transactional
-    public Booking createBooking(String userId, String roomId, BookingRequestDTO bookingRequest) {
+    public Booking createBooking(BookingRequestDTO bookingRequest) {
         // Find user and room
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId));
+        User user = userRepository.findById(bookingRequest.getUserId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + bookingRequest.getUserId()));
 
-        Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found with id: " + roomId));
+        Room room = roomRepository.findById(bookingRequest.getRoomId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found with id: " + bookingRequest));
+//
+//        // Check if room is available
+//        if (!room.getAvailable()) {
+//            new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not available");
+//        }
 
-        // Check if room is available
-        if (!room.getAvailable()) {
-            new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not available");
+        List<Booking> existingBookings = bookingRepository
+                .findByRoomRoomIdAndBookedDate(bookingRequest.getRoomId(), bookingRequest.getBookedDate());
+
+        if (!existingBookings.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, // 409
+                    "Booking already exists for the selected date. Please choose a different date."
+            );
         }
+
 
         // Create new booking
         Booking booking = new Booking();
         booking.setBookingDate(bookingRequest.getBookingDate());
         booking.setBookedDate(bookingRequest.getBookedDate());
-        booking.setStatus(bookingRequest.getStatus() != null ? bookingRequest.getStatus() : "CONFIRMED");
-        booking.setRating(bookingRequest.getRating());
         booking.setRentalPeriod(bookingRequest.getRentalPeriod());
         booking.setTimestamp(LocalDateTime.now());
+
+        // Set room availability and status
+        room.setAvailable(false);
+        room.setStatus("BOOKED FOR "+booking.getBookedDate()); // Set status to "BOOKED"
+        roomRepository.save(room); // Save the updated room status
 
         // Set relationships
         booking.setUser(user);
         booking.setRoom(room);
+        booking.setStatus("CONFIRMED");
+
+
+
+
 
         // Generate booking ID (you can add @PrePersist in Booking entity similar to others)
         SecureRandom random = new SecureRandom();

@@ -33,6 +33,7 @@ public class Booking {
     @Column(name = "rental_period")
     private String rentalPeriod;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

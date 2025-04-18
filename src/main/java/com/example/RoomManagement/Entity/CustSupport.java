@@ -1,5 +1,8 @@
 package com.example.RoomManagement.Entity;
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import jakarta.persistence.*;
+
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,6 +31,17 @@ public class CustSupport {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @PrePersist
+    public void generateId() {
+        this.timestamp = LocalDateTime.now();
+
+        SecureRandom random = new SecureRandom();
+        char[] alphabet = NanoIdUtils.DEFAULT_ALPHABET;
+        int size = 8;
+
+        this.reqId = "req_" + NanoIdUtils.randomNanoId(random, alphabet, size);
+    }
 
     public CustSupport() {}
 

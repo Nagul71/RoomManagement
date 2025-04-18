@@ -19,13 +19,11 @@ public class BookingController {
     private BookingService bookingService;
 
     @PostMapping("/createbooking")
-    public String createBooking(
-            @RequestParam String userId,
-            @RequestParam String roomId,
+    public ResponseEntity<Booking> createBooking(
             @RequestBody BookingRequestDTO bookingRequest) {
 
-        Booking booking = bookingService.createBooking(userId, roomId, bookingRequest);
-        return "Room Booked";
+        Booking booking = bookingService.createBooking(bookingRequest);
+        return ResponseEntity.ok(booking);
     }
 
     @GetMapping("/user/{userId}")

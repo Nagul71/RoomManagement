@@ -1,6 +1,10 @@
 package com.example.RoomManagement.Entity;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,6 +24,17 @@ public class Review {
     @Column(name = "rev_created_at")
     private LocalDateTime revCreatedAt;
 
+    @Column(name = "rating")
+    private long rating;
+
+    public long getRating() {
+        return rating;
+    }
+
+    public void setRating(long rating) {
+        this.rating = rating;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -27,6 +42,17 @@ public class Review {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
+
+    @PrePersist
+    public void generateIdAndTimestamp() {
+        this.timestamp = LocalDateTime.now();
+
+        SecureRandom random = new SecureRandom();
+        char[] alphabet = NanoIdUtils.DEFAULT_ALPHABET;
+        int size = 8;
+
+        this.reviewId = "rev_" + NanoIdUtils.randomNanoId(random, alphabet, size);
+    }
 
     public Review() {}
 
