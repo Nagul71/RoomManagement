@@ -49,4 +49,10 @@ public class BookingController {
         Booking booking = bookingService.updateBookingStatus(bookingId, status);
         return ResponseEntity.ok(booking);
     }
+
+    @PostMapping("/cancel/{bookingId}")
+    public ResponseEntity<Booking> cancelBooking(@PathVariable String bookingId) {
+        Booking cancelledBooking = bookingService.cancelBooking(bookingId);
+        return ResponseEntity.ok(cancelledBooking);
+    }
 }

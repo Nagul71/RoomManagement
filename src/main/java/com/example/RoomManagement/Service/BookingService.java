@@ -47,10 +47,10 @@ public class BookingService {
 //            new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not available");
 //        }
 
-        List<Booking> existingBookings = bookingRepository
-                .findByRoomRoomIdAndBookedDate(bookingRequest.getRoomId(), bookingRequest.getBookedDate());
+        List<Booking> cancelledBookings = bookingRepository.findByRoomRoomIdAndBookedDateAndStatus(bookingRequest.getRoomId(), bookingRequest.getBookedDate(), "CONFIRMED");
 
-        if (!existingBookings.isEmpty()) {
+
+        if (!cancelledBookings.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, // 409
                     "Booking already exists for the selected date. Please choose a different date."
@@ -119,6 +119,27 @@ public class BookingService {
         if ("CANCELLED".equals(status)) {
             Room room = booking.getRoom();
             room.setAvailable(true);
+            roomRepository.save(room);
+        }
+
+        return bookingRepository.save(booking);
+    }
+
+    @Transactional
+    public Booking cancelBooking(String bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
+
+        if (!"PENDING".equals(booking.getStatus()) && !"CONFIRMED".equals(booking.getStatus())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Only PENDING or CONFIRMED bookings can be cancelled");
+        }
+
+        booking.setStatus("CANCELLED");
+
+        // Make the room available again
+        Room room = booking.getRoom();
+        if (room != null) {
+            room.setStatus("AVAILABLE");
             roomRepository.save(room);
         }
 

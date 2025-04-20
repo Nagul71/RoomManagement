@@ -1,5 +1,6 @@
 package com.example.RoomManagement.Controller;
 import com.example.RoomManagement.DTO.RoomCreationDTO;
+import com.example.RoomManagement.DTO.RoomUpdateDTO;
 import com.example.RoomManagement.Entity.Room;
 import com.example.RoomManagement.Service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,4 +45,19 @@ public class RoomController {
         return ResponseEntity.ok(rooms);
     }
 
+    @DeleteMapping("/delete/{roomId}")
+    public ResponseEntity <Optional<Room>> deleteroombyId(@PathVariable String roomId)
+    {
+        Optional<Room> rooms = roomService.deleteroombyId(roomId);
+        return ResponseEntity.ok(rooms);
+
+    }
+
+    @PutMapping("/update/{roomId}")
+    public ResponseEntity<Room> updateRoom(
+            @PathVariable String roomId,
+            @RequestBody RoomUpdateDTO roomUpdateDTO) {
+        Room updatedRoom = roomService.updateRoom(roomId, roomUpdateDTO);
+        return ResponseEntity.ok(updatedRoom);
+    }
 }

@@ -4,6 +4,8 @@ import com.example.RoomManagement.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
 
@@ -21,5 +23,9 @@ public class UserService {
         } else {
             throw new RuntimeException("Invalid email or password");
         }
+    }
+
+    public Optional<User> getuserbyId(String userId) {
+        return userRepo.findById(userId);
     }
 }

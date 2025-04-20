@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -25,6 +27,15 @@ public class UserController {
     public ResponseEntity<User> loginUser(@RequestBody LoginRequest request) {
         User user = userService.loginUser(request.getEmail(), request.getPassword());
         return ResponseEntity.ok(user); // This includes the userId
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<User> getuserbyId(@PathVariable String userId)
+    {
+        Optional<User> user = userService.getuserbyId(userId);
+        return user
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
 }

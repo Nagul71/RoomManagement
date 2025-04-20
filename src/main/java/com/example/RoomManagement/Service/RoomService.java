@@ -1,5 +1,6 @@
 package com.example.RoomManagement.Service;
 import com.example.RoomManagement.DTO.RoomCreationDTO;
+import com.example.RoomManagement.DTO.RoomUpdateDTO;
 import com.example.RoomManagement.Entity.Room;
 import com.example.RoomManagement.Entity.User;
 import com.example.RoomManagement.Repository.RoomRepository;
@@ -67,5 +68,42 @@ public class RoomService {
 
     public Optional<Room> getRoomById(String roomId) {
         return roomRepository.findById(roomId);
+    }
+
+    public Optional<Room> deleteroombyId(String roomId) {
+        Optional<Room> roomOptional = roomRepository.findById(roomId);
+        roomOptional.ifPresent(room -> roomRepository.deleteById(roomId));
+        return roomOptional;
+    }
+
+    @Transactional
+    public Room updateRoom(String roomId, RoomUpdateDTO roomUpdateDTO) {
+        Room existingRoom = roomRepository.findById(roomId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found with id: " + roomId));
+
+        // Update only the fields that are provided in the DTO
+        if (roomUpdateDTO.getSquareFeet() != null) {
+            existingRoom.setSquareFeet(roomUpdateDTO.getSquareFeet());
+        }
+        if (roomUpdateDTO.getLocation() != null) {
+            existingRoom.setLocation(roomUpdateDTO.getLocation());
+        }
+        if (roomUpdateDTO.getStatus() != null) {
+            existingRoom.setStatus(roomUpdateDTO.getStatus());
+        }
+        if (roomUpdateDTO.getBeds() != null) {
+            existingRoom.setBeds(roomUpdateDTO.getBeds());
+        }
+        if (roomUpdateDTO.getAvailable() != null) {
+            existingRoom.setAvailable(roomUpdateDTO.getAvailable());
+        }
+        if (roomUpdateDTO.getAcOrNonAc() != null) {
+            existingRoom.setAcOrNonAc(roomUpdateDTO.getAcOrNonAc());
+        }
+        if (roomUpdateDTO.getPrice() != null) {
+            existingRoom.setPrice(roomUpdateDTO.getPrice());
+        }
+
+        return roomRepository.save(existingRoom);
     }
 }

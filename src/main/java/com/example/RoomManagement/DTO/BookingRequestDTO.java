@@ -6,28 +6,31 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class BookingRequestDTO {
-    public String getBookingId() {
-        return bookingId;
-    }
-
-    public void setBookingId(String bookingId) {
-        this.bookingId = bookingId;
-    }
-
     private String bookingId;
     private LocalDate bookingDate;
     private LocalDate bookedDate;
     private String rentalPeriod;
     private String userId;
     private String roomId;
+    private String status;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     // Constructor from Booking entity
     public BookingRequestDTO(Booking booking) {
+        this.bookingId = booking.getBookingId();
         this.bookingDate = booking.getBookingDate();
         this.bookedDate = booking.getBookedDate();
         this.rentalPeriod = booking.getRentalPeriod();
         this.userId = booking.getUser().getUserId();
         this.roomId = booking.getRoom().getRoomId();
+        this.status = booking.getStatus();
     }
 
     public BookingRequestDTO()
@@ -35,6 +38,13 @@ public class BookingRequestDTO {
 
     }
 
+    public String getBookingId() {
+        return bookingId;
+    }
+
+    public void setBookingId(String bookingId) {
+        this.bookingId = bookingId;
+    }
 
     public LocalDate getBookingDate() {
         return bookingDate;
